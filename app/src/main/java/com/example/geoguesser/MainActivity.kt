@@ -13,6 +13,5 @@ class MainActivity : AppCompatActivity() {
         findViewById<Button>(R.id.guessPlaceBtn).setOnClickListener {
             startActivity(Intent(this,GuessPlaceActivity::class.java))
         }
-
     }
 }
