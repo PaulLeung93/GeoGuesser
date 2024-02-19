@@ -1,5 +1,7 @@
 package com.example.geoguesser
 
+import android.graphics.Color
+import android.location.Location
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
@@ -18,6 +20,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.PolylineOptions
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class GuessPlaceActivity : AppCompatActivity(), OnStreetViewPanoramaReadyCallback,
@@ -55,6 +58,7 @@ class GuessPlaceActivity : AppCompatActivity(), OnStreetViewPanoramaReadyCallbac
             toggleMapVisibility()
         }
 
+        //Fab for map fragment. Allows user to confirm their marker selection
         binding?.markLocationFAB?.setOnClickListener {
 
             if (marker != null) {
@@ -72,15 +76,28 @@ class GuessPlaceActivity : AppCompatActivity(), OnStreetViewPanoramaReadyCallbac
 
                 //Show the StreetView Marker
                 val greenMarkerIcon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)
-                val streetViewLocation = streetViewPanorama.location?.position
+                val streetViewLocation = streetViewPanorama.location.position
+
                 if (streetViewLocation != null) {
                     // Add the StreetView marker directly to the map
                     mMap.addMarker(MarkerOptions().position(streetViewLocation).title("StreetView Marker").icon(greenMarkerIcon) )
 
                     // Move the camera to the StreetView location
                     mMap.moveCamera(CameraUpdateFactory.newLatLng(streetViewLocation))
+
+                    //Draw a line between two markers
+                    mMap.addPolyline(PolylineOptions()
+                        .add(markerPosition,streetViewLocation)
+                        .color(Color.BLUE))
+
+                    //Calculate and print the distance of the polyline
+                    val distance = calculateDistance(markerPosition, streetViewLocation)
+
+                    // Toast the distance
+                    Toast.makeText(this, "Distance: $distance meters", Toast.LENGTH_SHORT).show()
                 }
 
+                mMap.setOnMapClickListener(null)
 
             } else {
                 // No marker present, show a toast asking the user to mark a location
@@ -117,6 +134,19 @@ class GuessPlaceActivity : AppCompatActivity(), OnStreetViewPanoramaReadyCallbac
         mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng))
     }
 
+    // Function to calculate distance between two LatLng points
+    private fun calculateDistance(latLng1: LatLng, latLng2: LatLng): Float {
+        val location1 = Location("")
+        location1.latitude = latLng1.latitude
+        location1.longitude = latLng1.longitude
+
+        val location2 = Location("")
+        location2.latitude = latLng2.latitude
+        location2.longitude = latLng2.longitude
+
+        return location1.distanceTo(location2)
+    }
+
     private fun toggleMapVisibility() {
         val mapFragment: Fragment = supportFragmentManager.findFragmentById(R.id.map_Fragment)!!
         val markLocationFAB: FloatingActionButton = findViewById(R.id.markLocationFAB)
@@ -135,6 +165,10 @@ class GuessPlaceActivity : AppCompatActivity(), OnStreetViewPanoramaReadyCallbac
                 .hide(mapFragment)
                 .commit()
             markLocationFAB.visibility = View.GONE
+
+            //Clear existing markers
+            //mMap.clear()
+
         } else {
             // If map is hidden, show it
             supportFragmentManager.beginTransaction()
