@@ -7,6 +7,10 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import com.android.volley.BuildConfig
+import com.android.volley.Request
+import com.android.volley.toolbox.JsonObjectRequest
+import com.android.volley.toolbox.Volley
 import com.example.geoguesser.databinding.ActivityGuessPlaceBinding
 import com.example.geoguesser.databinding.ActivityMapsBinding
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -22,6 +26,7 @@ import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.model.PolylineOptions
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import org.json.JSONException
 
 class GuessPlaceActivity : AppCompatActivity(), OnStreetViewPanoramaReadyCallback,
     OnMapReadyCallback {
@@ -107,10 +112,14 @@ class GuessPlaceActivity : AppCompatActivity(), OnStreetViewPanoramaReadyCallbac
     }
 
     override fun onStreetViewPanoramaReady(streetViewPanorama: StreetViewPanorama) {
-        val sanFrancisco = LatLng(37.754130, -122.447129)
-        streetViewPanorama.setPosition(sanFrancisco)
         this.streetViewPanorama = streetViewPanorama
+        streetViewPanorama.isStreetNamesEnabled = false  //Removes street names
+
+        val coordinates = generateRandomLocation()
+        //streetViewPanorama.setPosition(coordinates)
+        checkStreetViewAvailability(coordinates)
     }
+
 
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
@@ -177,4 +186,56 @@ class GuessPlaceActivity : AppCompatActivity(), OnStreetViewPanoramaReadyCallbac
             markLocationFAB.visibility = View.VISIBLE
         }
     }
+
+
+    //Generating random coordinates (NYC example)
+    private fun generateRandomLocation(): LatLng {
+        // Define geographical bounds
+        val minLatitude = 40.70
+        val maxLatitude = 40.8772
+        val minLongitude = -74.0182
+        val maxLongitude = -73.926
+
+        // Generate random latitude and longitude within bounds
+        val latitude = minLatitude + (Math.random() * (maxLatitude - minLatitude))
+        val longitude = minLongitude + (Math.random() * (maxLongitude - minLongitude))
+
+        return LatLng(latitude,longitude)
+    }
+
+    private fun checkStreetViewAvailability(coordinates: LatLng) {
+        val apiKey = com.example.geoguesser.BuildConfig.MAPS_API_KEY
+        val streetViewApiUrl =
+            "https://maps.googleapis.com/maps/api/streetview/metadata?location=${coordinates.latitude},${coordinates.longitude}&key=$apiKey"
+
+        val queue = Volley.newRequestQueue(this)
+
+        val jsonObjectRequest = JsonObjectRequest(
+            Request.Method.GET, streetViewApiUrl, null,
+            { response ->
+                try {
+                    // Check if Street View imagery is available
+                    val streetViewAvailable = response.getString("status") == "OK"
+                    if (streetViewAvailable) {
+                        // Street View is available, set the panorama position
+                        streetViewPanorama.setPosition(coordinates)
+                    } else {
+                        // Street View is not available, generate new coordinates
+                        val newCoordinates = generateRandomLocation()
+                        checkStreetViewAvailability(newCoordinates)
+                    }
+                } catch (e: JSONException) {
+                    e.printStackTrace()
+                }
+            },
+            { error ->
+                error.printStackTrace()
+                // Handle errors
+            }
+        )
+
+        queue.add(jsonObjectRequest)
+    }
+
+
 }
