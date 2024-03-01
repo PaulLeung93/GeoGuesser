@@ -58,4 +58,60 @@
         android:contentDescription="Mark Location" />
 
 
+    <androidx.cardview.widget.CardView
+        android:id="@+id/scoreboardCardView"
+        android:layout_width="match_parent"
+        android:layout_height="380dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:visibility="gone"
+        app:cardBackgroundColor="#378805">
+
+        <TextView
+            android:id="@+id/tvScoreboard"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:padding="16dp"
+            android:text="Scoreboard"
+            android:textColor="@android:color/black"
+            android:textSize="24sp" />
+
+        <TextView
+            android:id="@+id/tvDistance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:padding="16dp"
+            android:layout_marginTop="80dp"
+            android:text="Distance: "
+            android:textColor="@android:color/black"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/tvPoints"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:padding="16dp"
+            android:layout_marginTop="160dp"
+            android:text="Points: "
+            android:textColor="@android:color/black"
+            android:textSize="18sp"
+          />
+
+        <TextView
+            android:id="@+id/tvTotalScore"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:padding="16dp"
+            android:layout_marginTop="240dp"
+            android:text="Total Score: "
+            android:textColor="@android:color/black"
+            android:textSize="18sp" />
+
+    </androidx.cardview.widget.CardView>
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

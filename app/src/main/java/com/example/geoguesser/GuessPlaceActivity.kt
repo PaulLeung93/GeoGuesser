@@ -2,17 +2,17 @@ package com.example.geoguesser
 
 import android.graphics.Color
 import android.location.Location
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
+import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
-import com.android.volley.BuildConfig
 import com.android.volley.Request
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
 import com.example.geoguesser.databinding.ActivityGuessPlaceBinding
-import com.example.geoguesser.databinding.ActivityMapsBinding
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -27,6 +27,8 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.model.PolylineOptions
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import org.json.JSONException
+
+
 
 class GuessPlaceActivity : AppCompatActivity(), OnStreetViewPanoramaReadyCallback,
     OnMapReadyCallback {
@@ -63,9 +65,19 @@ class GuessPlaceActivity : AppCompatActivity(), OnStreetViewPanoramaReadyCallbac
             toggleMapVisibility()
         }
 
+        //Declaring Card view
+        val scoreboardCardView: CardView = findViewById(R.id.scoreboardCardView)
+
+        // Find TextViews inside the CardView by their IDs
+        val tvScoreboard: TextView = scoreboardCardView.findViewById(R.id.tvScoreboard)
+        val tvDistance: TextView = scoreboardCardView.findViewById(R.id.tvDistance)
+        val tvPoints: TextView = scoreboardCardView.findViewById(R.id.tvPoints)
+        val tvTotalScore: TextView = scoreboardCardView.findViewById(R.id.tvTotalScore)
+
         //Fab for map fragment. Allows user to confirm their marker selection
         binding?.markLocationFAB?.setOnClickListener {
 
+            //User confirms their marker selection
             if (marker != null) {
                 // Marker is present, retrieve its position
                 val markerPosition = marker!!.position
@@ -79,7 +91,7 @@ class GuessPlaceActivity : AppCompatActivity(), OnStreetViewPanoramaReadyCallbac
                     Toast.LENGTH_SHORT
                 ).show()
 
-                //Show the StreetView Marker
+                //Show the StreetView Marker after successful marker selection
                 val greenMarkerIcon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)
                 val streetViewLocation = streetViewPanorama.location.position
 
@@ -100,10 +112,24 @@ class GuessPlaceActivity : AppCompatActivity(), OnStreetViewPanoramaReadyCallbac
 
                     // Toast the distance
                     Toast.makeText(this, "Distance: $distance meters", Toast.LENGTH_SHORT).show()
+
+                    //Update Scoreboard
+                    scoreboardCardView.visibility = View.VISIBLE
+
+                    //Calculate the score. Allow points within the distance of 10000 meters, with a multiplier of 1000
+                    val points = calculateScore(distance, 10000, 1000)
+
+
+                    tvDistance.append(" $distance meters")
+                    tvPoints.append(" $points")
+                    //tvTotalScore
+
+
                 }
 
                 mMap.setOnMapClickListener(null)
 
+            //User has not selected a marker
             } else {
                 // No marker present, show a toast asking the user to mark a location
                 Toast.makeText(this, "Mark a location first!", Toast.LENGTH_SHORT).show()
@@ -235,6 +261,19 @@ class GuessPlaceActivity : AppCompatActivity(), OnStreetViewPanoramaReadyCallbac
         )
 
         queue.add(jsonObjectRequest)
+    }
+
+
+    //Calculate Scoreboard
+    private fun calculateScore(distance: Float, maxDistance: Int, maxScore: Int): Int {
+        val score: Int
+        if (distance <= maxDistance) {
+            // Use a linear mapping formula to calculate the score
+            score = ((maxDistance - distance) / maxDistance.toFloat() * maxScore).toInt()
+        } else {
+            return 0 // If the distance exceeds the maximum, score is 0
+        }
+        return score
     }
 
 
