@@ -111,6 +111,14 @@
             android:textColor="@android:color/black"
             android:textSize="18sp" />
 
+        <Button
+            android:id="@+id/btnNewRound"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="New Round"
+            android:layout_gravity="bottom|center_horizontal"
+            android:textSize="18sp"/>
+
     </androidx.cardview.widget.CardView>
 
 

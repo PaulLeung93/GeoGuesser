@@ -27,7 +27,7 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.model.PolylineOptions
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import org.json.JSONException
-
+import kotlin.random.Random
 
 
 class GuessPlaceActivity : AppCompatActivity(), OnStreetViewPanoramaReadyCallback,
@@ -37,6 +37,19 @@ class GuessPlaceActivity : AppCompatActivity(), OnStreetViewPanoramaReadyCallbac
     private lateinit var binding: ActivityGuessPlaceBinding
     private var marker: Marker? = null
     private lateinit var streetViewPanorama: StreetViewPanorama
+
+
+    // Find TextViews inside the CardView by their IDs
+    private lateinit var scoreboardCardView: CardView
+    private lateinit var tvScoreboard: TextView
+    private lateinit var tvDistance: TextView
+    private lateinit var tvPoints: TextView
+    private lateinit var tvTotalScore: TextView
+
+
+    var totalScore = 0
+    var currentRound = 1
+    var maxRounds = 5
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,14 +78,23 @@ class GuessPlaceActivity : AppCompatActivity(), OnStreetViewPanoramaReadyCallbac
             toggleMapVisibility()
         }
 
-        //Declaring Card view
-        val scoreboardCardView: CardView = findViewById(R.id.scoreboardCardView)
 
-        // Find TextViews inside the CardView by their IDs
-        val tvScoreboard: TextView = scoreboardCardView.findViewById(R.id.tvScoreboard)
-        val tvDistance: TextView = scoreboardCardView.findViewById(R.id.tvDistance)
-        val tvPoints: TextView = scoreboardCardView.findViewById(R.id.tvPoints)
-        val tvTotalScore: TextView = scoreboardCardView.findViewById(R.id.tvTotalScore)
+
+//        // Find TextViews inside the CardView by their IDs
+//        val tvScoreboard: TextView = scoreboardCardView.findViewById(R.id.tvScoreboard)
+//        val tvDistance: TextView = scoreboardCardView.findViewById(R.id.tvDistance)
+//        val tvPoints: TextView = scoreboardCardView.findViewById(R.id.tvPoints)
+//        val tvTotalScore: TextView = scoreboardCardView.findViewById(R.id.tvTotalScore)
+
+        scoreboardCardView = findViewById(R.id.scoreboardCardView)
+        tvScoreboard = scoreboardCardView.findViewById(R.id.tvScoreboard)
+        tvDistance = scoreboardCardView.findViewById(R.id.tvDistance)
+        tvPoints = scoreboardCardView.findViewById(R.id.tvPoints)
+        tvTotalScore = scoreboardCardView.findViewById(R.id.tvTotalScore)
+
+        var totalScore = 0
+        var currentRound = 1
+        var maxRounds = 5
 
         //Fab for map fragment. Allows user to confirm their marker selection
         binding?.markLocationFAB?.setOnClickListener {
@@ -119,11 +141,26 @@ class GuessPlaceActivity : AppCompatActivity(), OnStreetViewPanoramaReadyCallbac
                     //Calculate the score. Allow points within the distance of 10000 meters, with a multiplier of 1000
                     val points = calculateScore(distance, 10000, 1000)
 
-
                     tvDistance.append(" $distance meters")
                     tvPoints.append(" $points")
-                    //tvTotalScore
+                    totalScore = totalScore + points
+                    tvTotalScore.append(" $totalScore")
 
+                    // Check if it's the last round
+                    if (currentRound < maxRounds) {
+                        // Increment current round and start a new round
+                        currentRound++
+
+                        //Click Button to start a new round
+                        binding.btnNewRound.setOnClickListener {
+                            startNewRound()
+                            toggleMapVisibility()
+                        }
+
+                    } else {
+                        // Display game over message or handle end of game
+                        Toast.makeText(this, "Game Over! Total Score: $totalScore", Toast.LENGTH_SHORT).show()
+                    }
 
                 }
 
@@ -218,13 +255,16 @@ class GuessPlaceActivity : AppCompatActivity(), OnStreetViewPanoramaReadyCallbac
     private fun generateRandomLocation(): LatLng {
         // Define geographical bounds
         val minLatitude = 40.70
-        val maxLatitude = 40.8772
-        val minLongitude = -74.0182
-        val maxLongitude = -73.926
+        val maxLatitude = 40.78
+        val minLongitude = -73.98
+        val maxLongitude = -73.94
 
         // Generate random latitude and longitude within bounds
-        val latitude = minLatitude + (Math.random() * (maxLatitude - minLatitude))
-        val longitude = minLongitude + (Math.random() * (maxLongitude - minLongitude))
+//        val latitude = minLatitude + (Math.random() * (maxLatitude - minLatitude))
+//        val longitude = minLongitude + (Math.random() * (maxLongitude - minLongitude))
+
+        val latitude = Random.nextDouble(minLatitude, maxLatitude)
+        val longitude = Random.nextDouble(minLongitude, maxLongitude)
 
         return LatLng(latitude,longitude)
     }
@@ -263,7 +303,6 @@ class GuessPlaceActivity : AppCompatActivity(), OnStreetViewPanoramaReadyCallbac
         queue.add(jsonObjectRequest)
     }
 
-
     //Calculate Scoreboard
     private fun calculateScore(distance: Float, maxDistance: Int, maxScore: Int): Int {
         val score: Int
@@ -276,5 +315,31 @@ class GuessPlaceActivity : AppCompatActivity(), OnStreetViewPanoramaReadyCallbac
         return score
     }
 
+//Starting a new round
+    private fun startNewRound() {
+        // Reset necessary variables for a new round
+    // Clear existing markers
+        mMap.clear()
+
+    scoreboardCardView.visibility = View.INVISIBLE
+
+        // Generate new random location
+        val coordinates = generateRandomLocation()
+        // Fetch street view for the new location
+        checkStreetViewAvailability(coordinates)
+
+    // Reset marker to null
+    marker = null
+
+    // Set map click listener again to allow user to choose a new marker
+    mMap.setOnMapClickListener { latLng ->
+        // Call a function to add a marker at the clicked location
+        addOrUpdateMarker(latLng)
+    }
+
+    tvDistance.text = ""
+          tvPoints.text = ""
+
+    }
 
 }
