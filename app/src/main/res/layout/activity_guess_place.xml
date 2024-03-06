@@ -78,15 +78,49 @@
             android:textSize="24sp" />
 
         <TextView
+            android:id="@+id/tvRounds"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:padding="16dp"
+            android:text=""
+            android:textColor="@android:color/black"
+            android:textSize="24sp" />
+
+        <TextView
+            android:id="@+id/Distance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:padding="16dp"
+            android:layout_marginTop="80dp"
+            android:text="Distance:"
+            android:textColor="@android:color/black"
+            android:textSize="18sp" />
+
+        <TextView
             android:id="@+id/tvDistance"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="left"
             android:padding="16dp"
             android:layout_marginTop="80dp"
-            android:text="Distance: "
+            android:layout_marginStart="80dp"
+            android:text=""
             android:textColor="@android:color/black"
             android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/Points"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:padding="16dp"
+            android:layout_marginTop="160dp"
+            android:text="Points: "
+            android:textColor="@android:color/black"
+            android:textSize="18sp" />
+
 
         <TextView
             android:id="@+id/tvPoints"
@@ -95,10 +129,22 @@
             android:layout_gravity="left"
             android:padding="16dp"
             android:layout_marginTop="160dp"
-            android:text="Points: "
+            android:layout_marginStart="60dp"
+            android:text=""
             android:textColor="@android:color/black"
             android:textSize="18sp"
           />
+
+        <TextView
+            android:id="@+id/TotalScore"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:padding="16dp"
+            android:layout_marginTop="240dp"
+            android:text="Total Score: "
+            android:textColor="@android:color/black"
+            android:textSize="18sp" />
 
         <TextView
             android:id="@+id/tvTotalScore"
@@ -107,7 +153,8 @@
             android:layout_gravity="left"
             android:padding="16dp"
             android:layout_marginTop="240dp"
-            android:text="Total Score: "
+            android:layout_marginStart="100dp"
+            android:text=""
             android:textColor="@android:color/black"
             android:textSize="18sp" />
 

@@ -45,6 +45,7 @@ class GuessPlaceActivity : AppCompatActivity(), OnStreetViewPanoramaReadyCallbac
     private lateinit var tvDistance: TextView
     private lateinit var tvPoints: TextView
     private lateinit var tvTotalScore: TextView
+    private lateinit var tvRound: TextView
 
 
     var totalScore = 0
@@ -78,19 +79,13 @@ class GuessPlaceActivity : AppCompatActivity(), OnStreetViewPanoramaReadyCallbac
             toggleMapVisibility()
         }
 
-
-
-//        // Find TextViews inside the CardView by their IDs
-//        val tvScoreboard: TextView = scoreboardCardView.findViewById(R.id.tvScoreboard)
-//        val tvDistance: TextView = scoreboardCardView.findViewById(R.id.tvDistance)
-//        val tvPoints: TextView = scoreboardCardView.findViewById(R.id.tvPoints)
-//        val tvTotalScore: TextView = scoreboardCardView.findViewById(R.id.tvTotalScore)
-
+        // Find TextViews inside the CardView by their IDs
         scoreboardCardView = findViewById(R.id.scoreboardCardView)
         tvScoreboard = scoreboardCardView.findViewById(R.id.tvScoreboard)
         tvDistance = scoreboardCardView.findViewById(R.id.tvDistance)
         tvPoints = scoreboardCardView.findViewById(R.id.tvPoints)
         tvTotalScore = scoreboardCardView.findViewById(R.id.tvTotalScore)
+        tvRound = scoreboardCardView.findViewById(R.id.tvRounds)
 
         var totalScore = 0
         var currentRound = 1
@@ -141,10 +136,14 @@ class GuessPlaceActivity : AppCompatActivity(), OnStreetViewPanoramaReadyCallbac
                     //Calculate the score. Allow points within the distance of 10000 meters, with a multiplier of 1000
                     val points = calculateScore(distance, 10000, 1000)
 
-                    tvDistance.append(" $distance meters")
-                    tvPoints.append(" $points")
+                    tvDistance.text = "$distance meters"
+
+                    tvPoints.text = "$points"
+
                     totalScore = totalScore + points
-                    tvTotalScore.append(" $totalScore")
+                    tvTotalScore.text = "$totalScore"
+
+                    tvRound.text = "$currentRound / $maxRounds"
 
                     // Check if it's the last round
                     if (currentRound < maxRounds) {
@@ -318,28 +317,27 @@ class GuessPlaceActivity : AppCompatActivity(), OnStreetViewPanoramaReadyCallbac
 //Starting a new round
     private fun startNewRound() {
         // Reset necessary variables for a new round
-    // Clear existing markers
+        // Clear existing markers
         mMap.clear()
 
-    scoreboardCardView.visibility = View.INVISIBLE
+        scoreboardCardView.visibility = View.INVISIBLE
 
         // Generate new random location
         val coordinates = generateRandomLocation()
         // Fetch street view for the new location
         checkStreetViewAvailability(coordinates)
 
-    // Reset marker to null
-    marker = null
+        // Reset marker to null
+        marker = null
 
-    // Set map click listener again to allow user to choose a new marker
-    mMap.setOnMapClickListener { latLng ->
+        // Set map click listener again to allow user to choose a new marker
+        mMap.setOnMapClickListener { latLng ->
         // Call a function to add a marker at the clicked location
         addOrUpdateMarker(latLng)
-    }
+        }
 
-    tvDistance.text = ""
-          tvPoints.text = ""
-
+        tvDistance.text = ""
+        tvPoints.text = ""
     }
 
 }
