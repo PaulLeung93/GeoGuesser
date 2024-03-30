@@ -47,7 +47,6 @@ class GuessPlaceActivity : AppCompatActivity(), OnStreetViewPanoramaReadyCallbac
     private lateinit var tvTotalScore: TextView
     private lateinit var tvRound: TextView
 
-
     var totalScore = 0
     var currentRound = 1
     var maxRounds = 5
@@ -87,91 +86,13 @@ class GuessPlaceActivity : AppCompatActivity(), OnStreetViewPanoramaReadyCallbac
         tvTotalScore = scoreboardCardView.findViewById(R.id.tvTotalScore)
         tvRound = scoreboardCardView.findViewById(R.id.tvRounds)
 
-        var totalScore = 0
-        var currentRound = 1
-        var maxRounds = 5
 
         //Fab for map fragment. Allows user to confirm their marker selection
         binding?.markLocationFAB?.setOnClickListener {
-
-            //User confirms their marker selection
-            if (marker != null) {
-                // Marker is present, retrieve its position
-                val markerPosition = marker!!.position
-                val latitude = markerPosition.latitude
-                val longitude = markerPosition.longitude
-
-                // Show a toast with the latitude and longitude
-                Toast.makeText(
-                    this,
-                    "Marker Location: Latitude $latitude, Longitude $longitude",
-                    Toast.LENGTH_SHORT
-                ).show()
-
-                //Show the StreetView Marker after successful marker selection
-                val greenMarkerIcon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)
-                val streetViewLocation = streetViewPanorama.location.position
-
-                if (streetViewLocation != null) {
-                    // Add the StreetView marker directly to the map
-                    mMap.addMarker(MarkerOptions().position(streetViewLocation).title("StreetView Marker").icon(greenMarkerIcon) )
-
-                    // Move the camera to the StreetView location
-                    mMap.moveCamera(CameraUpdateFactory.newLatLng(streetViewLocation))
-
-                    //Draw a line between two markers
-                    mMap.addPolyline(PolylineOptions()
-                        .add(markerPosition,streetViewLocation)
-                        .color(Color.BLUE))
-
-                    //Calculate and print the distance of the polyline
-                    val distance = calculateDistance(markerPosition, streetViewLocation)
-
-                    // Toast the distance
-                    Toast.makeText(this, "Distance: $distance meters", Toast.LENGTH_SHORT).show()
-
-                    //Update Scoreboard
-                    scoreboardCardView.visibility = View.VISIBLE
-
-                    //Calculate the score. Allow points within the distance of 10000 meters, with a multiplier of 1000
-                    val points = calculateScore(distance, 10000, 1000)
-
-                    tvDistance.text = "$distance meters"
-
-                    tvPoints.text = "$points"
-
-                    totalScore = totalScore + points
-                    tvTotalScore.text = "$totalScore"
-
-                    tvRound.text = "$currentRound / $maxRounds"
-
-                    // Check if it's the last round
-                    if (currentRound < maxRounds) {
-                        // Increment current round and start a new round
-                        currentRound++
-
-                        //Click Button to start a new round
-                        binding.btnNewRound.setOnClickListener {
-                            startNewRound()
-                            toggleMapVisibility()
-                        }
-
-                    } else {
-                        // Display game over message or handle end of game
-                        Toast.makeText(this, "Game Over! Total Score: $totalScore", Toast.LENGTH_SHORT).show()
-                    }
-
-                }
-
-                mMap.setOnMapClickListener(null)
-
-            //User has not selected a marker
-            } else {
-                // No marker present, show a toast asking the user to mark a location
-                Toast.makeText(this, "Mark a location first!", Toast.LENGTH_SHORT).show()
-            }
+            markLocation()
         }
     }
+
 
     override fun onStreetViewPanoramaReady(streetViewPanorama: StreetViewPanorama) {
         this.streetViewPanorama = streetViewPanorama
@@ -205,6 +126,102 @@ class GuessPlaceActivity : AppCompatActivity(), OnStreetViewPanoramaReadyCallbac
         mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng))
     }
 
+    //Confirms the user marker selection in the Map Fragment
+    private fun markLocation(){
+
+        //User confirms their marker selection
+        if (marker != null) {
+            // Marker is present, retrieve its position
+            val markerPosition = marker!!.position
+            val latitude = markerPosition.latitude
+            val longitude = markerPosition.longitude
+
+            // Show a toast with the latitude and longitude
+            Toast.makeText(
+                this,
+                "Marker Location: Latitude $latitude, Longitude $longitude",
+                Toast.LENGTH_SHORT
+            ).show()
+
+            //Show the StreetView Marker after successful marker selection
+            val greenMarkerIcon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)
+            val streetViewLocation = streetViewPanorama.location.position
+
+            if (streetViewLocation != null) {
+                // Add the StreetView marker directly to the map
+                mMap.addMarker(MarkerOptions().position(streetViewLocation).title("StreetView Marker").icon(greenMarkerIcon) )
+
+                // Move the camera to the StreetView location
+                mMap.moveCamera(CameraUpdateFactory.newLatLng(streetViewLocation))
+
+                //Draw a line between two markers
+                mMap.addPolyline(PolylineOptions()
+                    .add(markerPosition,streetViewLocation)
+                    .color(Color.BLUE))
+
+                //Calculate and print the distance of the polyline
+                val distance = calculateDistance(markerPosition, streetViewLocation)
+
+                // Toast the distance
+                Toast.makeText(this, "Distance: $distance meters", Toast.LENGTH_SHORT).show()
+
+                //Update Scoreboard
+                scoreboardCardView.visibility = View.VISIBLE
+
+                //Calculate the score. Allow points within the distance of 10000 meters, with a multiplier of 1000
+                val points = calculateScore(distance, 10000, 1000)
+
+                tvDistance.text = "$distance meters"
+
+                tvPoints.text = "$points"
+
+                totalScore = totalScore + points
+                tvTotalScore.text = "$totalScore"
+
+                tvRound.text = "$currentRound / $maxRounds"
+
+                // Check if it's the last round
+                if (currentRound < maxRounds) {
+                    // Increment current round and start a new round
+                    currentRound++
+
+                    //Click Button to start a new round
+                    binding.btnNewRound.setOnClickListener {
+                        startNewRound()
+                    }
+
+                } else {
+                    // Display game over message or handle end of game
+                    //Display New Game Button, reset round variables, display name prompt for ROOM
+
+                    //Make next round button invisible
+                    binding.btnNewRound.visibility = View.GONE
+
+                    //Make new game button visible
+                    binding.btnNewGame.visibility = View.VISIBLE
+
+                    //Click new game button
+                    binding.btnNewGame.setOnClickListener {
+                        //new game function (clears previous data)
+                        startNewGame()
+                        Toast.makeText(this, "NEW GAME", Toast.LENGTH_SHORT).show()
+                    }
+
+                    Toast.makeText(this, "Game Over! Total Score: $totalScore", Toast.LENGTH_SHORT).show()
+                }
+
+            }
+
+            mMap.setOnMapClickListener(null)
+
+            //User has not selected a marker
+        } else {
+            // No marker present, show a toast asking the user to mark a location
+            Toast.makeText(this, "Mark a location first!", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+
     // Function to calculate distance between two LatLng points
     private fun calculateDistance(latLng1: LatLng, latLng2: LatLng): Float {
         val location1 = Location("")
@@ -217,6 +234,7 @@ class GuessPlaceActivity : AppCompatActivity(), OnStreetViewPanoramaReadyCallbac
 
         return location1.distanceTo(location2)
     }
+
 
     private fun toggleMapVisibility() {
         val mapFragment: Fragment = supportFragmentManager.findFragmentById(R.id.map_Fragment)!!
@@ -236,10 +254,6 @@ class GuessPlaceActivity : AppCompatActivity(), OnStreetViewPanoramaReadyCallbac
                 .hide(mapFragment)
                 .commit()
             markLocationFAB.visibility = View.GONE
-
-            //Clear existing markers
-            //mMap.clear()
-
         } else {
             // If map is hidden, show it
             supportFragmentManager.beginTransaction()
@@ -257,10 +271,6 @@ class GuessPlaceActivity : AppCompatActivity(), OnStreetViewPanoramaReadyCallbac
         val maxLatitude = 40.78
         val minLongitude = -73.98
         val maxLongitude = -73.94
-
-        // Generate random latitude and longitude within bounds
-//        val latitude = minLatitude + (Math.random() * (maxLatitude - minLatitude))
-//        val longitude = minLongitude + (Math.random() * (maxLongitude - minLongitude))
 
         val latitude = Random.nextDouble(minLatitude, maxLatitude)
         val longitude = Random.nextDouble(minLongitude, maxLongitude)
@@ -319,6 +329,8 @@ class GuessPlaceActivity : AppCompatActivity(), OnStreetViewPanoramaReadyCallbac
         // Reset necessary variables for a new round
         // Clear existing markers
         mMap.clear()
+        toggleMapVisibility()
+        resetCameraPosition()
 
         scoreboardCardView.visibility = View.INVISIBLE
 
@@ -338,6 +350,48 @@ class GuessPlaceActivity : AppCompatActivity(), OnStreetViewPanoramaReadyCallbac
 
         tvDistance.text = ""
         tvPoints.text = ""
+    }
+
+    //Starting a new game
+    private fun startNewGame() {
+        mMap.clear()
+        toggleMapVisibility()
+        resetCameraPosition()
+
+        scoreboardCardView.visibility = View.INVISIBLE
+        binding.btnNewRound.visibility = View.VISIBLE
+        binding.btnNewGame.visibility = View.GONE
+
+        tvDistance.text = ""
+        tvPoints.text = ""
+        tvTotalScore.text = ""
+
+        totalScore = 0
+        currentRound = 1
+
+        // Generate new random location
+        val coordinates = generateRandomLocation()
+        // Fetch street view for the new location
+        checkStreetViewAvailability(coordinates)
+
+        // Reset marker to null
+        marker = null
+
+        // Set map click listener again to allow user to choose a new marker
+        mMap.setOnMapClickListener { latLng ->
+            // Call a function to add a marker at the clicked location
+            addOrUpdateMarker(latLng)
+        }
+
+    }
+
+    private fun resetCameraPosition() {
+        // Define the default LatLng position and zoom level
+        val defaultLatLng = LatLng(0.0, 0.0)
+        val defaultZoom = 2f
+
+        // Animate the camera to the default position and zoom level
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(defaultLatLng, defaultZoom))
     }
 
 }

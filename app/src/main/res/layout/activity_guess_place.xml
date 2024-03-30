@@ -50,7 +50,6 @@
         app:layout_constraintBottom_toBottomOf="@id/map_Fragment"
         app:layout_constraintEnd_toEndOf="@id/map_Fragment"
         android:visibility="gone"
-
         app:backgroundTint="@android:color/transparent"
         app:tint="#0000FF"
         android:elevation="0dp"
@@ -61,7 +60,7 @@
     <androidx.cardview.widget.CardView
         android:id="@+id/scoreboardCardView"
         android:layout_width="match_parent"
-        android:layout_height="380dp"
+        android:layout_height="400dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         android:visibility="gone"
@@ -162,9 +161,18 @@
             android:id="@+id/btnNewRound"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="New Round"
+            android:text="Next Round"
             android:layout_gravity="bottom|center_horizontal"
             android:textSize="18sp"/>
+
+        <Button
+            android:id="@+id/btnNewGame"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="New Game"
+            android:layout_gravity="bottom|center_horizontal"
+            android:textSize="18sp"
+            android:visibility="gone"/>
 
     </androidx.cardview.widget.CardView>
 
