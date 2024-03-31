@@ -38,8 +38,7 @@ class GuessPlaceActivity : AppCompatActivity(), OnStreetViewPanoramaReadyCallbac
     private var marker: Marker? = null
     private lateinit var streetViewPanorama: StreetViewPanorama
 
-
-    // Find TextViews inside the CardView by their IDs
+    //TextViews of the Scoreboard cardview
     private lateinit var scoreboardCardView: CardView
     private lateinit var tvScoreboard: TextView
     private lateinit var tvDistance: TextView
@@ -55,6 +54,14 @@ class GuessPlaceActivity : AppCompatActivity(), OnStreetViewPanoramaReadyCallbac
         super.onCreate(savedInstanceState)
         binding = ActivityGuessPlaceBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        //Attaching views of our Scoreboard card
+        scoreboardCardView = findViewById(R.id.scoreboardCardView)
+        tvScoreboard = scoreboardCardView.findViewById(R.id.tvScoreboard)
+        tvDistance = scoreboardCardView.findViewById(R.id.tvDistance)
+        tvPoints = scoreboardCardView.findViewById(R.id.tvPoints)
+        tvTotalScore = scoreboardCardView.findViewById(R.id.tvTotalScore)
+        tvRound = scoreboardCardView.findViewById(R.id.tvRounds)
 
         //StreetView Fragment
         val streetViewPanoramaFragment =
@@ -73,22 +80,13 @@ class GuessPlaceActivity : AppCompatActivity(), OnStreetViewPanoramaReadyCallbac
             .commit()
 
         //FAB used to toggle the visibility of the map fragment
-        binding?.mapFAB?.setOnClickListener {
-            Toast.makeText(this, "Floating Action Button Clicked!", Toast.LENGTH_SHORT).show()
+        binding.mapFAB.setOnClickListener {
+            //Toast.makeText(this, "Floating Action Button Clicked!", Toast.LENGTH_SHORT).show()
             toggleMapVisibility()
         }
 
-        // Find TextViews inside the CardView by their IDs
-        scoreboardCardView = findViewById(R.id.scoreboardCardView)
-        tvScoreboard = scoreboardCardView.findViewById(R.id.tvScoreboard)
-        tvDistance = scoreboardCardView.findViewById(R.id.tvDistance)
-        tvPoints = scoreboardCardView.findViewById(R.id.tvPoints)
-        tvTotalScore = scoreboardCardView.findViewById(R.id.tvTotalScore)
-        tvRound = scoreboardCardView.findViewById(R.id.tvRounds)
-
-
-        //Fab for map fragment. Allows user to confirm their marker selection
-        binding?.markLocationFAB?.setOnClickListener {
+        //Confirm user's marker selection in the Map Fragment
+        binding.markLocationFAB.setOnClickListener {
             markLocation()
         }
     }
@@ -131,17 +129,17 @@ class GuessPlaceActivity : AppCompatActivity(), OnStreetViewPanoramaReadyCallbac
 
         //User confirms their marker selection
         if (marker != null) {
+
+            //Hide Mark Location button so user cannot make another selection
+            binding.markLocationFAB.visibility = View.GONE
+
             // Marker is present, retrieve its position
             val markerPosition = marker!!.position
-            val latitude = markerPosition.latitude
-            val longitude = markerPosition.longitude
+//            val latitude = markerPosition.latitude
+//            val longitude = markerPosition.longitude
 
             // Show a toast with the latitude and longitude
-            Toast.makeText(
-                this,
-                "Marker Location: Latitude $latitude, Longitude $longitude",
-                Toast.LENGTH_SHORT
-            ).show()
+            //Toast.makeText(this, "Marker Location: Latitude $latitude, Longitude $longitude", Toast.LENGTH_SHORT).show()
 
             //Show the StreetView Marker after successful marker selection
             val greenMarkerIcon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)
@@ -163,7 +161,7 @@ class GuessPlaceActivity : AppCompatActivity(), OnStreetViewPanoramaReadyCallbac
                 val distance = calculateDistance(markerPosition, streetViewLocation)
 
                 // Toast the distance
-                Toast.makeText(this, "Distance: $distance meters", Toast.LENGTH_SHORT).show()
+                //Toast.makeText(this, "Distance: $distance meters", Toast.LENGTH_SHORT).show()
 
                 //Update Scoreboard
                 scoreboardCardView.visibility = View.VISIBLE
@@ -172,9 +170,7 @@ class GuessPlaceActivity : AppCompatActivity(), OnStreetViewPanoramaReadyCallbac
                 val points = calculateScore(distance, 10000, 1000)
 
                 tvDistance.text = "$distance meters"
-
                 tvPoints.text = "$points"
-
                 totalScore = totalScore + points
                 tvTotalScore.text = "$totalScore"
 
@@ -191,7 +187,7 @@ class GuessPlaceActivity : AppCompatActivity(), OnStreetViewPanoramaReadyCallbac
                     }
 
                 } else {
-                    // Display game over message or handle end of game
+                    // Display Game Over Message
                     //Display New Game Button, reset round variables, display name prompt for ROOM
 
                     //Make next round button invisible
