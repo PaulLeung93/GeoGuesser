@@ -1,5 +1,6 @@
 package com.example.geoguesser
 
+import android.content.Intent
 import android.graphics.Color
 import android.location.Location
 import android.os.Bundle
@@ -176,7 +177,7 @@ class GuessPlaceActivity : AppCompatActivity(), OnStreetViewPanoramaReadyCallbac
 
                 tvRound.text = "$currentRound / $maxRounds"
 
-                // Check if it's the last round
+                // Check the current round
                 if (currentRound < maxRounds) {
                     // Increment current round and start a new round
                     currentRound++
@@ -185,9 +186,8 @@ class GuessPlaceActivity : AppCompatActivity(), OnStreetViewPanoramaReadyCallbac
                     binding.btnNewRound.setOnClickListener {
                         startNewRound()
                     }
-
+                    //If it's the last round
                 } else {
-                    // Display Game Over Message
                     //Display New Game Button, reset round variables, display name prompt for ROOM
 
                     //Make next round button invisible
@@ -196,11 +196,18 @@ class GuessPlaceActivity : AppCompatActivity(), OnStreetViewPanoramaReadyCallbac
                     //Make new game button visible
                     binding.btnNewGame.visibility = View.VISIBLE
 
+                    //Make new game button visible
+                    binding.btnMainMenu.visibility = View.VISIBLE
+
                     //Click new game button
                     binding.btnNewGame.setOnClickListener {
                         //new game function (clears previous data)
                         startNewGame()
                         Toast.makeText(this, "NEW GAME", Toast.LENGTH_SHORT).show()
+                    }
+
+                    binding.btnMainMenu.setOnClickListener {
+                        startActivity(Intent(this,MainActivity::class.java))
                     }
 
                     Toast.makeText(this, "Game Over! Total Score: $totalScore", Toast.LENGTH_SHORT).show()
@@ -219,7 +226,7 @@ class GuessPlaceActivity : AppCompatActivity(), OnStreetViewPanoramaReadyCallbac
 
 
     // Function to calculate distance between two LatLng points
-    private fun calculateDistance(latLng1: LatLng, latLng2: LatLng): Float {
+    private fun calculateDistance(latLng1: LatLng, latLng2: LatLng): Int {
         val location1 = Location("")
         location1.latitude = latLng1.latitude
         location1.longitude = latLng1.longitude
@@ -228,7 +235,7 @@ class GuessPlaceActivity : AppCompatActivity(), OnStreetViewPanoramaReadyCallbac
         location2.latitude = latLng2.latitude
         location2.longitude = latLng2.longitude
 
-        return location1.distanceTo(location2)
+        return location1.distanceTo(location2).toInt()
     }
 
 
@@ -309,7 +316,7 @@ class GuessPlaceActivity : AppCompatActivity(), OnStreetViewPanoramaReadyCallbac
     }
 
     //Calculate Scoreboard
-    private fun calculateScore(distance: Float, maxDistance: Int, maxScore: Int): Int {
+    private fun calculateScore(distance: Int, maxDistance: Int, maxScore: Int): Int {
         val score: Int
         if (distance <= maxDistance) {
             // Use a linear mapping formula to calculate the score
@@ -357,6 +364,7 @@ class GuessPlaceActivity : AppCompatActivity(), OnStreetViewPanoramaReadyCallbac
         scoreboardCardView.visibility = View.INVISIBLE
         binding.btnNewRound.visibility = View.VISIBLE
         binding.btnNewGame.visibility = View.GONE
+        binding.btnMainMenu.visibility = View.GONE
 
         tvDistance.text = ""
         tvPoints.text = ""
