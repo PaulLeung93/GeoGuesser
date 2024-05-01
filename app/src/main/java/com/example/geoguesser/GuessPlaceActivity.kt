@@ -143,7 +143,12 @@ class GuessPlaceActivity : AppCompatActivity(), OnStreetViewPanoramaReadyCallbac
                 mMap.addMarker(MarkerOptions().position(streetViewLocation).title("StreetView Marker").icon(greenMarkerIcon) )
 
                 // Move the camera to the StreetView location
-                mMap.moveCamera(CameraUpdateFactory.newLatLng(streetViewLocation))
+                //mMap.moveCamera(CameraUpdateFactory.newLatLng(streetViewLocation))
+
+                // Move the camera to the StreetView location
+                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(streetViewLocation, 14f)) // Adjust zoom level as needed
+
+
 
                 //Draw a line between two markers
                 mMap.addPolyline(PolylineOptions()
@@ -266,6 +271,12 @@ class GuessPlaceActivity : AppCompatActivity(), OnStreetViewPanoramaReadyCallbac
         val minLongitude = -73.98
         val maxLongitude = -73.90
 
+        //USA
+//        val minLatitude = 24.396308
+//        val maxLatitude = 49.384358
+//        val minLongitude = -125.0
+//        val maxLongitude = -66.93457
+
         val latitude = Random.nextDouble(minLatitude, maxLatitude)
         val longitude = Random.nextDouble(minLongitude, maxLongitude)
 
@@ -285,7 +296,9 @@ class GuessPlaceActivity : AppCompatActivity(), OnStreetViewPanoramaReadyCallbac
                 try {
                     // Check if Street View imagery is available
                     val streetViewAvailable = response.getString("status") == "OK"
-                    if (streetViewAvailable) {
+                    val locationType = response.optString("location_type")
+
+                    if (streetViewAvailable && locationType != "indoors") {
                         // Street View is available, set the panorama position
                         streetViewPanorama.setPosition(coordinates)
                     } else {

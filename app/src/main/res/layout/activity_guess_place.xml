@@ -82,7 +82,8 @@
                 android:padding="16dp"
                 android:text="Scoreboard"
                 android:textColor="@android:color/black"
-                android:textSize="24sp" />
+                android:textSize="24sp"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/tvRounds"

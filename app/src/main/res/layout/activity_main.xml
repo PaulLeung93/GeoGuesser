@@ -18,14 +18,26 @@
 
     <Button
         android:id="@+id/guessPlaceBtn"
-        android:layout_width="wrap_content"
+        android:layout_width="150dp"
         android:layout_height="wrap_content"
-        android:text="Guess Place"
+        android:text="Play Game"
         android:backgroundTint="#378805"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/earthGIF"
         app:layout_constraintVertical_bias="0.208" />
+
+    <Button
+        android:id="@+id/highScore"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:text="Scoreboard"
+        android:layout_margin="30dp"
+        android:backgroundTint="#378805"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/guessPlaceBtn"
+       />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
