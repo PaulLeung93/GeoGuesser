@@ -82,7 +82,6 @@ class GuessPlaceActivity : AppCompatActivity(), OnStreetViewPanoramaReadyCallbac
 
         //FAB used to toggle the visibility of the map fragment
         binding.mapFAB.setOnClickListener {
-            //Toast.makeText(this, "Floating Action Button Clicked!", Toast.LENGTH_SHORT).show()
             toggleMapVisibility()
         }
 
@@ -98,7 +97,6 @@ class GuessPlaceActivity : AppCompatActivity(), OnStreetViewPanoramaReadyCallbac
         streetViewPanorama.isStreetNamesEnabled = false  //Removes street names
 
         val coordinates = generateRandomLocation()
-        //streetViewPanorama.setPosition(coordinates)
         checkStreetViewAvailability(coordinates)
     }
 
@@ -121,14 +119,13 @@ class GuessPlaceActivity : AppCompatActivity(), OnStreetViewPanoramaReadyCallbac
             marker?.position = latLng
         }
 
-        // Optionally, you can move the camera to the clicked location
+        // Move the camera to the clicked location
         mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng))
     }
 
     //Confirms the user marker selection in the Map Fragment
-    private fun markLocation(){
-
-        //User confirms their marker selection
+    private fun markLocation() {
+        //If marker is present on the map fragment, confirms their selection
         if (marker != null) {
 
             //Hide Mark Location button so user cannot make another selection
@@ -136,11 +133,6 @@ class GuessPlaceActivity : AppCompatActivity(), OnStreetViewPanoramaReadyCallbac
 
             // Marker is present, retrieve its position
             val markerPosition = marker!!.position
-//            val latitude = markerPosition.latitude
-//            val longitude = markerPosition.longitude
-
-            // Show a toast with the latitude and longitude
-            //Toast.makeText(this, "Marker Location: Latitude $latitude, Longitude $longitude", Toast.LENGTH_SHORT).show()
 
             //Show the StreetView Marker after successful marker selection
             val greenMarkerIcon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)
@@ -161,9 +153,6 @@ class GuessPlaceActivity : AppCompatActivity(), OnStreetViewPanoramaReadyCallbac
                 //Calculate and print the distance of the polyline
                 val distance = calculateDistance(markerPosition, streetViewLocation)
 
-                // Toast the distance
-                //Toast.makeText(this, "Distance: $distance meters", Toast.LENGTH_SHORT).show()
-
                 //Update Scoreboard
                 scoreboardCardView.visibility = View.VISIBLE
 
@@ -177,7 +166,9 @@ class GuessPlaceActivity : AppCompatActivity(), OnStreetViewPanoramaReadyCallbac
 
                 tvRound.text = "$currentRound / $maxRounds"
 
-                // Check the current round
+
+                //TODO: Simplify round checking into own function
+                //Check the current round
                 if (currentRound < maxRounds) {
                     // Increment current round and start a new round
                     currentRound++
@@ -186,7 +177,8 @@ class GuessPlaceActivity : AppCompatActivity(), OnStreetViewPanoramaReadyCallbac
                     binding.btnNewRound.setOnClickListener {
                         startNewRound()
                     }
-                    //If it's the last round
+
+                //If it's the last round, display New Game and Main Menu Buttons
                 } else {
                     //Display New Game Button, reset round variables, display name prompt for ROOM
 
@@ -196,7 +188,7 @@ class GuessPlaceActivity : AppCompatActivity(), OnStreetViewPanoramaReadyCallbac
                     //Make new game button visible
                     binding.btnNewGame.visibility = View.VISIBLE
 
-                    //Make new game button visible
+                    //Make Main Menu button visible
                     binding.btnMainMenu.visibility = View.VISIBLE
 
                     //Click new game button
@@ -214,10 +206,10 @@ class GuessPlaceActivity : AppCompatActivity(), OnStreetViewPanoramaReadyCallbac
                 }
 
             }
-
+            //Set marker back to null after User is finished
             mMap.setOnMapClickListener(null)
 
-            //User has not selected a marker
+        //Else User has not selected a marker
         } else {
             // No marker present, show a toast asking the user to mark a location
             Toast.makeText(this, "Mark a location first!", Toast.LENGTH_SHORT).show()
@@ -237,7 +229,6 @@ class GuessPlaceActivity : AppCompatActivity(), OnStreetViewPanoramaReadyCallbac
 
         return location1.distanceTo(location2).toInt()
     }
-
 
     private fun toggleMapVisibility() {
         val mapFragment: Fragment = supportFragmentManager.findFragmentById(R.id.map_Fragment)!!
@@ -273,7 +264,7 @@ class GuessPlaceActivity : AppCompatActivity(), OnStreetViewPanoramaReadyCallbac
         val minLatitude = 40.70
         val maxLatitude = 40.78
         val minLongitude = -73.98
-        val maxLongitude = -73.94
+        val maxLongitude = -73.90
 
         val latitude = Random.nextDouble(minLatitude, maxLatitude)
         val longitude = Random.nextDouble(minLongitude, maxLongitude)
@@ -327,7 +318,7 @@ class GuessPlaceActivity : AppCompatActivity(), OnStreetViewPanoramaReadyCallbac
         return score
     }
 
-//Starting a new round
+    //Starting a new round
     private fun startNewRound() {
         // Reset necessary variables for a new round
         // Clear existing markers

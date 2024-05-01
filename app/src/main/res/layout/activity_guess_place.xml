@@ -64,127 +64,151 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/map_Fragment"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:visibility="gone"
-        app:cardBackgroundColor="#378805">
+        android:visibility="gone">
 
-        <TextView
-            android:id="@+id/tvScoreboard"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:padding="16dp"
-            android:text="Scoreboard"
-            android:textColor="@android:color/black"
-            android:textSize="24sp" />
+        <RelativeLayout
+            android:background="@drawable/gradient"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            >
 
-        <TextView
-            android:id="@+id/tvRounds"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="right"
-            android:padding="16dp"
-            android:text=""
-            android:textColor="@android:color/black"
-            android:textSize="24sp" />
+            <TextView
+                android:id="@+id/tvScoreboard"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:padding="16dp"
+                android:text="Scoreboard"
+                android:textColor="@android:color/black"
+                android:textSize="24sp" />
 
-        <TextView
-            android:id="@+id/Distance"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="left"
-            android:padding="16dp"
-            android:layout_marginTop="80dp"
-            android:text="Distance:"
-            android:textColor="@android:color/black"
-            android:textSize="18sp" />
+            <TextView
+                android:id="@+id/tvRounds"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:padding="16dp"
+                android:text=""
+                android:textColor="@android:color/black"
+                android:textSize="24sp" />
 
-        <TextView
-            android:id="@+id/tvDistance"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="left"
-            android:padding="16dp"
-            android:layout_marginTop="80dp"
-            android:layout_marginStart="80dp"
-            android:text=""
-            android:textColor="@android:color/black"
-            android:textSize="18sp" />
+            <TextView
+                android:id="@+id/Distance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left"
+                android:padding="16dp"
+                android:layout_marginTop="80dp"
+                android:text="Distance:"
+                android:textColor="@android:color/black"
+                android:textSize="18sp" />
 
-        <TextView
-            android:id="@+id/Points"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="left"
-            android:padding="16dp"
-            android:layout_marginTop="160dp"
-            android:text="Points: "
-            android:textColor="@android:color/black"
-            android:textSize="18sp" />
+            <TextView
+                android:id="@+id/tvDistance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left"
+                android:padding="16dp"
+                android:layout_marginTop="80dp"
+                android:layout_marginStart="80dp"
+                android:text=""
+                android:textColor="@android:color/black"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/Points"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left"
+                android:padding="16dp"
+                android:layout_marginTop="160dp"
+                android:text="Points: "
+                android:textColor="@android:color/black"
+                android:textSize="18sp" />
 
 
-        <TextView
-            android:id="@+id/tvPoints"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="left"
-            android:padding="16dp"
-            android:layout_marginTop="160dp"
-            android:layout_marginStart="60dp"
-            android:text=""
-            android:textColor="@android:color/black"
-            android:textSize="18sp"
-          />
+            <TextView
+                android:id="@+id/tvPoints"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left"
+                android:padding="16dp"
+                android:layout_marginTop="160dp"
+                android:layout_marginStart="60dp"
+                android:text=""
+                android:textColor="@android:color/black"
+                android:textSize="18sp"
+              />
 
-        <TextView
-            android:id="@+id/TotalScore"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="left"
-            android:padding="16dp"
-            android:layout_marginTop="240dp"
-            android:text="Total Score: "
-            android:textColor="@android:color/black"
-            android:textSize="18sp" />
+            <TextView
+                android:id="@+id/TotalScore"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left"
+                android:padding="16dp"
+                android:layout_marginTop="240dp"
+                android:text="Total Score: "
+                android:textColor="@android:color/black"
+                android:textSize="18sp" />
 
-        <TextView
-            android:id="@+id/tvTotalScore"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="left"
-            android:padding="16dp"
-            android:layout_marginTop="240dp"
-            android:layout_marginStart="100dp"
-            android:text=""
-            android:textColor="@android:color/black"
-            android:textSize="18sp" />
+            <TextView
+                android:id="@+id/tvTotalScore"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left"
+                android:padding="16dp"
+                android:layout_marginTop="240dp"
+                android:layout_marginStart="100dp"
+                android:text=""
+                android:textColor="@android:color/black"
+                android:textSize="18sp" />
 
-        <Button
-            android:id="@+id/btnNewRound"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Next Round"
-            android:layout_gravity="bottom|center_horizontal"
-            android:textSize="18sp"/>
+            <Button
+                android:id="@+id/btnNewRound"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="#378805"
+                android:text="Next Round"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:layout_margin="5dp"
+                android:textSize="18sp"/>
 
-        <Button
-            android:id="@+id/btnNewGame"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="New Game"
-            android:layout_gravity="bottom|start"
-            android:textSize="18sp"
-            android:visibility="gone"/>
+            <View
+                android:id="@+id/dummy"
+                android:layout_height="0dp"
+                android:layout_width="0dp"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"/>
 
-        <Button
-            android:id="@+id/btnMainMenu"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Main Menu"
-            android:layout_gravity="bottom|end"
-            android:textSize="18sp"
-            android:visibility="gone"/>
+            <Button
+                android:id="@+id/btnNewGame"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="#378805"
+                android:text="New Game"
+                android:layout_toLeftOf="@id/dummy"
+                android:layout_alignParentBottom="true"
+                android:textSize="18sp"
+                android:layout_margin="5dp"
+                android:visibility="gone"/>
+
+            <Button
+                android:id="@+id/btnMainMenu"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="#378805"
+                android:text="Main Menu"
+                android:layout_toRightOf="@id/dummy"
+                android:layout_alignParentBottom="true"
+                android:textSize="18sp"
+                android:layout_margin="5dp"
+                android:visibility="gone"/>
+
+        </RelativeLayout>
 
     </androidx.cardview.widget.CardView>
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>
