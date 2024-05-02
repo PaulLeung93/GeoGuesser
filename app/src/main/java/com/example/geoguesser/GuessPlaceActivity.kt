@@ -143,10 +143,10 @@ class GuessPlaceActivity : AppCompatActivity(), OnStreetViewPanoramaReadyCallbac
                 mMap.addMarker(MarkerOptions().position(streetViewLocation).title("StreetView Marker").icon(greenMarkerIcon) )
 
                 // Move the camera to the StreetView location
-                //mMap.moveCamera(CameraUpdateFactory.newLatLng(streetViewLocation))
+                mMap.moveCamera(CameraUpdateFactory.newLatLng(streetViewLocation))
 
                 // Move the camera to the StreetView location
-                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(streetViewLocation, 14f)) // Adjust zoom level as needed
+                //mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(streetViewLocation, 14f)) // Adjust zoom level as needed
 
 
 
