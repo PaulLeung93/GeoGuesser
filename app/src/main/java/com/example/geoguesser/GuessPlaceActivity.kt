@@ -5,11 +5,12 @@ import android.graphics.Color
 import android.location.Location
 import android.os.Bundle
 import android.view.View
-import android.widget.TextView
+import android.widget.EditText
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import com.android.volley.Request
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
@@ -27,6 +28,8 @@ import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.model.PolylineOptions
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.json.JSONException
 import kotlin.random.Random
 
@@ -290,6 +293,9 @@ class GuessPlaceActivity : AppCompatActivity(), OnStreetViewPanoramaReadyCallbac
         } else {
 
             //TODO: display scoreboard name submission for ROOM
+            showNameInputDialog(totalScore)
+
+
             //Next round button is invisible because this is the last round
             binding.btnNewRound.visibility = View.GONE
 
@@ -378,5 +384,33 @@ class GuessPlaceActivity : AppCompatActivity(), OnStreetViewPanoramaReadyCallbac
 
         // Animate the camera to the default position and zoom level
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(defaultLatLng, defaultZoom))
+    }
+
+    private fun showNameInputDialog(score: Int) {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Enter your name")
+
+        val input = EditText(this)
+        builder.setView(input)
+
+        builder.setPositiveButton("OK") { dialog, _ ->
+            val playerName = input.text.toString().trim()
+            if (playerName.isNotEmpty()) {
+                saveScoreToDatabase(playerName, score)
+                dialog.dismiss() // Close the dialog box after submission
+            }
+        }
+
+        builder.setNegativeButton("Cancel") { dialog, _ -> dialog.cancel() }
+
+        builder.show()
+    }
+
+    private fun saveScoreToDatabase(playerName: String, score: Int) {
+        val scoreEntity = Score(playerName = playerName, score = score)
+
+        lifecycleScope.launch(Dispatchers.IO) {
+            (application as MyApplication).db.ScoreDao().insertScore(scoreEntity)
+        }
     }
 }
