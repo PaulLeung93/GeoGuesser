@@ -39,14 +39,7 @@ class GuessPlaceActivity : AppCompatActivity(), OnStreetViewPanoramaReadyCallbac
     private var marker: Marker? = null
     private lateinit var streetViewPanorama: StreetViewPanorama
 
-    //TextViews of the Scoreboard cardview
-    private lateinit var scoreboardCardView: CardView
-    private lateinit var tvScoreboard: TextView
-    private lateinit var tvDistance: TextView
-    private lateinit var tvPoints: TextView
-    private lateinit var tvTotalScore: TextView
-    private lateinit var tvRound: TextView
-
+    //Variables used to update the scoreboard views
     var totalScore = 0
     var currentRound = 1
     var maxRounds = 5
@@ -55,14 +48,6 @@ class GuessPlaceActivity : AppCompatActivity(), OnStreetViewPanoramaReadyCallbac
         super.onCreate(savedInstanceState)
         binding = ActivityGuessPlaceBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        //Attaching views of our Scoreboard card
-        scoreboardCardView = findViewById(R.id.scoreboardCardView)
-        tvScoreboard = scoreboardCardView.findViewById(R.id.tvScoreboard)
-        tvDistance = scoreboardCardView.findViewById(R.id.tvDistance)
-        tvPoints = scoreboardCardView.findViewById(R.id.tvPoints)
-        tvTotalScore = scoreboardCardView.findViewById(R.id.tvTotalScore)
-        tvRound = scoreboardCardView.findViewById(R.id.tvRounds)
 
         //StreetView Fragment
         val streetViewPanoramaFragment =
@@ -91,7 +76,6 @@ class GuessPlaceActivity : AppCompatActivity(), OnStreetViewPanoramaReadyCallbac
         }
     }
 
-
     override fun onStreetViewPanoramaReady(streetViewPanorama: StreetViewPanorama) {
         this.streetViewPanorama = streetViewPanorama
         streetViewPanorama.isStreetNamesEnabled = false  //Removes street names
@@ -99,7 +83,6 @@ class GuessPlaceActivity : AppCompatActivity(), OnStreetViewPanoramaReadyCallbac
         val coordinates = generateRandomLocation()
         checkStreetViewAvailability(coordinates)
     }
-
 
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
@@ -149,28 +132,29 @@ class GuessPlaceActivity : AppCompatActivity(), OnStreetViewPanoramaReadyCallbac
                 //mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(streetViewLocation, 14f)) // Adjust zoom level as needed
 
 
-
                 //Draw a line between two markers
                 mMap.addPolyline(PolylineOptions()
                     .add(markerPosition,streetViewLocation)
                     .color(Color.BLUE))
 
+
+                //TODO Simplify updating scoreboard to own function
+                //Update Scoreboard
+                binding.scoreboardCardView.visibility = View.VISIBLE
+
                 //Calculate and print the distance of the polyline
                 val distance = calculateDistance(markerPosition, streetViewLocation)
 
-                //Update Scoreboard
-                scoreboardCardView.visibility = View.VISIBLE
-
                 //Calculate the score. Allow points within the distance of 10000 meters, with a multiplier of 1000
+                //Maximum 1k points per round, Perfect score is 5k points
                 val points = calculateScore(distance, 10000, 1000)
 
-                tvDistance.text = "$distance meters"
-                tvPoints.text = "$points"
+                //Update scoreboard views with updated values
+                binding.tvDistance.text = "$distance meters"
+                binding.tvPoints.text = "$points"
                 totalScore = totalScore + points
-                tvTotalScore.text = "$totalScore"
-
-                tvRound.text = "$currentRound / $maxRounds"
-
+                binding.tvTotalScore.text = "$totalScore"
+                binding.tvRounds.text = "$currentRound / $maxRounds"
 
                 //TODO: Simplify round checking into own function
                 //Check the current round
@@ -183,11 +167,11 @@ class GuessPlaceActivity : AppCompatActivity(), OnStreetViewPanoramaReadyCallbac
                         startNewRound()
                     }
 
-                //If it's the last round, display New Game and Main Menu Buttons
+                //If it's the last round, display New Game and Main Menu Buttons. Reset scoreboard values
                 } else {
-                    //Display New Game Button, reset round variables, display name prompt for ROOM
 
-                    //Make next round button invisible
+                    //TODO: display scoreboard name submission for ROOM
+                    //Next round button is invisible because this is the last round
                     binding.btnNewRound.visibility = View.GONE
 
                     //Make new game button visible
@@ -206,10 +190,8 @@ class GuessPlaceActivity : AppCompatActivity(), OnStreetViewPanoramaReadyCallbac
                     binding.btnMainMenu.setOnClickListener {
                         startActivity(Intent(this,MainActivity::class.java))
                     }
-
                     Toast.makeText(this, "Game Over! Total Score: $totalScore", Toast.LENGTH_SHORT).show()
                 }
-
             }
             //Set marker back to null after User is finished
             mMap.setOnMapClickListener(null)
@@ -220,7 +202,6 @@ class GuessPlaceActivity : AppCompatActivity(), OnStreetViewPanoramaReadyCallbac
             Toast.makeText(this, "Mark a location first!", Toast.LENGTH_SHORT).show()
         }
     }
-
 
     // Function to calculate distance between two LatLng points
     private fun calculateDistance(latLng1: LatLng, latLng2: LatLng): Int {
@@ -315,7 +296,6 @@ class GuessPlaceActivity : AppCompatActivity(), OnStreetViewPanoramaReadyCallbac
                 // Handle errors
             }
         )
-
         queue.add(jsonObjectRequest)
     }
 
@@ -339,48 +319,10 @@ class GuessPlaceActivity : AppCompatActivity(), OnStreetViewPanoramaReadyCallbac
         toggleMapVisibility()
         resetCameraPosition()
 
-        scoreboardCardView.visibility = View.INVISIBLE
+        binding.scoreboardCardView.visibility = View.INVISIBLE
 
-        // Generate new random location
-        val coordinates = generateRandomLocation()
-        // Fetch street view for the new location
-        checkStreetViewAvailability(coordinates)
-
-        // Reset marker to null
-        marker = null
-
-        // Set map click listener again to allow user to choose a new marker
-        mMap.setOnMapClickListener { latLng ->
-        // Call a function to add a marker at the clicked location
-        addOrUpdateMarker(latLng)
-        }
-
-        tvDistance.text = ""
-        tvPoints.text = ""
-    }
-
-    //Starting a new game
-    private fun startNewGame() {
-        mMap.clear()
-        toggleMapVisibility()
-        resetCameraPosition()
-
-        scoreboardCardView.visibility = View.INVISIBLE
-        binding.btnNewRound.visibility = View.VISIBLE
-        binding.btnNewGame.visibility = View.GONE
-        binding.btnMainMenu.visibility = View.GONE
-
-        tvDistance.text = ""
-        tvPoints.text = ""
-        tvTotalScore.text = ""
-
-        totalScore = 0
-        currentRound = 1
-
-        // Generate new random location
-        val coordinates = generateRandomLocation()
-        // Fetch street view for the new location
-        checkStreetViewAvailability(coordinates)
+        val coordinates = generateRandomLocation()   // Generate new random location
+        checkStreetViewAvailability(coordinates)   // Fetch street view for the new location
 
         // Reset marker to null
         marker = null
@@ -391,6 +333,40 @@ class GuessPlaceActivity : AppCompatActivity(), OnStreetViewPanoramaReadyCallbac
             addOrUpdateMarker(latLng)
         }
 
+        binding.tvDistance.text = ""
+        binding.tvPoints.text = ""
+    }
+
+    //Starting a new game
+    private fun startNewGame() {
+        mMap.clear()
+        toggleMapVisibility()
+        resetCameraPosition()
+
+        binding.scoreboardCardView.visibility = View.INVISIBLE
+        binding.btnNewRound.visibility = View.VISIBLE
+        binding.btnNewGame.visibility = View.GONE
+        binding.btnMainMenu.visibility = View.GONE
+
+        binding.tvDistance.text = ""
+        binding.tvPoints.text = ""
+        binding.tvTotalScore.text = ""
+
+        totalScore = 0
+        currentRound = 1
+
+
+        val coordinates = generateRandomLocation()   // Generate new random location
+        checkStreetViewAvailability(coordinates)  // Fetch street view for the new location
+
+        // Reset marker to null
+        marker = null
+
+        // Set map click listener again to allow user to choose a new marker
+        mMap.setOnMapClickListener { latLng ->
+            // Call a function to add a marker at the clicked location
+            addOrUpdateMarker(latLng)
+        }
     }
 
     private fun resetCameraPosition() {
@@ -401,5 +377,4 @@ class GuessPlaceActivity : AppCompatActivity(), OnStreetViewPanoramaReadyCallbac
         // Animate the camera to the default position and zoom level
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(defaultLatLng, defaultZoom))
     }
-
 }
