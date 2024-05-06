@@ -121,97 +121,61 @@ class GuessPlaceActivity : AppCompatActivity(), OnStreetViewPanoramaReadyCallbac
             val greenMarkerIcon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)
             val streetViewLocation = streetViewPanorama.location.position
 
-            if (streetViewLocation != null) {
-                // Add the StreetView marker directly to the map
-                mMap.addMarker(MarkerOptions().position(streetViewLocation).title("StreetView Marker").icon(greenMarkerIcon) )
+            // Add the StreetView marker directly to the map
+            mMap.addMarker(MarkerOptions().position(streetViewLocation).title("StreetView Marker").icon(greenMarkerIcon) )
 
-                // Move the camera to the StreetView location
-                mMap.moveCamera(CameraUpdateFactory.newLatLng(streetViewLocation))
+            // Move the camera to the StreetView location
+            mMap.moveCamera(CameraUpdateFactory.newLatLng(streetViewLocation))
 
-                // Move the camera to the StreetView location
-                //mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(streetViewLocation, 14f)) // Adjust zoom level as needed
+            //Draw a line between two markers
+            mMap.addPolyline(PolylineOptions()
+                .add(markerPosition,streetViewLocation)
+                .color(Color.BLUE))
 
+            //Update Scoreboard views
+            updateScoreboard(markerPosition, streetViewLocation)
 
-                //Draw a line between two markers
-                mMap.addPolyline(PolylineOptions()
-                    .add(markerPosition,streetViewLocation)
-                    .color(Color.BLUE))
+            //Checks the current round of the game, determines whether to display NewRound or NewGame button
+            checkCurrentRound()
 
-
-                //TODO Simplify updating scoreboard to own function
-                //Update Scoreboard
-                binding.scoreboardCardView.visibility = View.VISIBLE
-
-                //Calculate and print the distance of the polyline
-                val distance = calculateDistance(markerPosition, streetViewLocation)
-
-                //Calculate the score. Allow points within the distance of 10000 meters, with a multiplier of 1000
-                //Maximum 1k points per round, Perfect score is 5k points
-                val points = calculateScore(distance, 10000, 1000)
-
-                //Update scoreboard views with updated values
-                binding.tvDistance.text = "$distance meters"
-                binding.tvPoints.text = "$points"
-                totalScore = totalScore + points
-                binding.tvTotalScore.text = "$totalScore"
-                binding.tvRounds.text = "$currentRound / $maxRounds"
-
-                //TODO: Simplify round checking into own function
-                //Check the current round
-                if (currentRound < maxRounds) {
-                    // Increment current round and start a new round
-                    currentRound++
-
-                    //Click Button to start a new round
-                    binding.btnNewRound.setOnClickListener {
-                        startNewRound()
-                    }
-
-                //If it's the last round, display New Game and Main Menu Buttons. Reset scoreboard values
-                } else {
-
-                    //TODO: display scoreboard name submission for ROOM
-                    //Next round button is invisible because this is the last round
-                    binding.btnNewRound.visibility = View.GONE
-
-                    //Make new game button visible
-                    binding.btnNewGame.visibility = View.VISIBLE
-
-                    //Make Main Menu button visible
-                    binding.btnMainMenu.visibility = View.VISIBLE
-
-                    //Click new game button
-                    binding.btnNewGame.setOnClickListener {
-                        //new game function (clears previous data)
-                        startNewGame()
-                        Toast.makeText(this, "NEW GAME", Toast.LENGTH_SHORT).show()
-                    }
-
-                    binding.btnMainMenu.setOnClickListener {
-                        startActivity(Intent(this,MainActivity::class.java))
-                    }
-                    Toast.makeText(this, "Game Over! Total Score: $totalScore", Toast.LENGTH_SHORT).show()
-                }
-            }
             //Set marker back to null after User is finished
             mMap.setOnMapClickListener(null)
 
-        //Else User has not selected a marker
+        //Else User has not selected a marker, display toast
         } else {
             // No marker present, show a toast asking the user to mark a location
             Toast.makeText(this, "Mark a location first!", Toast.LENGTH_SHORT).show()
         }
     }
 
+    //Updates the Scoreboard cardview to display the new distance,points, and total score
+    private fun updateScoreboard(markerGuess: LatLng, markerAnswer: LatLng){
+        binding.scoreboardCardView.visibility = View.VISIBLE
+
+        //Calculate and print the distance of the polyline
+        val distance = calculateDistance(markerGuess, markerAnswer)
+
+        //Calculate the score. Allow points within the distance of 10000 meters, with a multiplier of 1000
+        //Maximum 1k points per round, Perfect score is 5k points
+        val points = calculateScore(distance, 10000, 1000)
+
+        //Update scoreboard views with updated values
+        binding.tvDistance.text = "$distance meters"
+        binding.tvPoints.text = "$points"
+        totalScore = totalScore + points
+        binding.tvTotalScore.text = "$totalScore"
+        binding.tvRounds.text = "$currentRound / $maxRounds"
+    }
+
     // Function to calculate distance between two LatLng points
-    private fun calculateDistance(latLng1: LatLng, latLng2: LatLng): Int {
+    private fun calculateDistance(markerGuess: LatLng, markerAnswer: LatLng): Int {
         val location1 = Location("")
-        location1.latitude = latLng1.latitude
-        location1.longitude = latLng1.longitude
+        location1.latitude = markerGuess.latitude
+        location1.longitude = markerGuess.longitude
 
         val location2 = Location("")
-        location2.latitude = latLng2.latitude
-        location2.longitude = latLng2.longitude
+        location2.latitude = markerAnswer.latitude
+        location2.longitude = markerAnswer.longitude
 
         return location1.distanceTo(location2).toInt()
     }
@@ -309,6 +273,44 @@ class GuessPlaceActivity : AppCompatActivity(), OnStreetViewPanoramaReadyCallbac
             return 0 // If the distance exceeds the maximum, score is 0
         }
         return score
+    }
+
+    //Check the current Round, determines whether to display NewRound or NewGame Button
+    private fun checkCurrentRound() {
+        if (currentRound < maxRounds) {
+            // Increment current round and start a new round
+            currentRound++
+
+            //Click Button to start a new round
+            binding.btnNewRound.setOnClickListener {
+                startNewRound()
+            }
+
+        //If it's the last round, display New Game and Main Menu Buttons. Reset scoreboard values
+        } else {
+
+            //TODO: display scoreboard name submission for ROOM
+            //Next round button is invisible because this is the last round
+            binding.btnNewRound.visibility = View.GONE
+
+            //Make new game button visible
+            binding.btnNewGame.visibility = View.VISIBLE
+
+            //Make Main Menu button visible
+            binding.btnMainMenu.visibility = View.VISIBLE
+
+            //Click new game button
+            binding.btnNewGame.setOnClickListener {
+                //new game function (clears previous data)
+                startNewGame()
+                Toast.makeText(this, "NEW GAME", Toast.LENGTH_SHORT).show()
+            }
+
+            binding.btnMainMenu.setOnClickListener {
+                startActivity(Intent(this,MainActivity::class.java))
+            }
+            Toast.makeText(this, "Game Over! Total Score: $totalScore", Toast.LENGTH_SHORT).show()
+        }
     }
 
     //Starting a new round
