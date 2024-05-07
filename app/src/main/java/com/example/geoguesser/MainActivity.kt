@@ -13,5 +13,9 @@ class MainActivity : AppCompatActivity() {
         findViewById<Button>(R.id.guessPlaceBtn).setOnClickListener {
             startActivity(Intent(this,GuessPlaceActivity::class.java))
         }
+
+        findViewById<Button>(R.id.highScoreBtn).setOnClickListener {
+            startActivity(Intent(this,ScoreboardActivity::class.java))
+        }
     }
 }
