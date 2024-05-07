@@ -8,23 +8,36 @@
     android:background="@drawable/scoreboard_gradient"
     tools:context=".ScoreboardActivity">
 
+    <ImageView
+        android:id="@+id/leaderboardIcon"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:contentDescription="Leaderboard Icon"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_centerHorizontal="true"
+        android:padding="24dp"
+        app:srcCompat="@drawable/baseline_gps_fixed_24"
+        app:backgroundTint="@android:color/transparent" />
+
+    <TextView
+        android:id="@+id/tvLeaderboard"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="36dp"
+        android:text="Leaderboard"
+        android:textColor="@color/white"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/leaderboardIcon" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/scoreboardRV"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello"
-        tools:layout_editor_absoluteX="153dp"
-        tools:layout_editor_absoluteY="168dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/tvLeaderboard" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

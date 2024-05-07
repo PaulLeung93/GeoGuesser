@@ -16,6 +16,7 @@ class ScoreAdapter(private val scoreList: List<Score>) : RecyclerView.Adapter<Sc
 
     override fun onBindViewHolder(holder: ScoreViewHolder, position: Int) {
         val currentItem = scoreList[position]
+        holder.textViewRank.text = (position + 1).toString()
         holder.textViewName.text = currentItem.playerName
         holder.textViewScore.text = currentItem.score.toString()
     }
@@ -23,6 +24,7 @@ class ScoreAdapter(private val scoreList: List<Score>) : RecyclerView.Adapter<Sc
     override fun getItemCount() = scoreList.size
 
     class ScoreViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val textViewRank: TextView = itemView.findViewById(R.id.tvRank)
         val textViewName: TextView = itemView.findViewById(R.id.tvUserName)
         val textViewScore: TextView = itemView.findViewById(R.id.tvUserPoints)
     }
