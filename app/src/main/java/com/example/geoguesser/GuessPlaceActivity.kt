@@ -95,6 +95,7 @@ class GuessPlaceActivity : AppCompatActivity(), OnStreetViewPanoramaReadyCallbac
         }
     }
 
+    //Updates the marker to where the user clicks on the map fragment
     private fun addOrUpdateMarker(latLng: LatLng) {
         // Check if the marker is already present
         if (marker == null) {
@@ -183,6 +184,7 @@ class GuessPlaceActivity : AppCompatActivity(), OnStreetViewPanoramaReadyCallbac
         return location1.distanceTo(location2).toInt()
     }
 
+    //This function displays/hides the MapFragment when the user selects the map FAB.
     private fun toggleMapVisibility() {
         val mapFragment: Fragment = supportFragmentManager.findFragmentById(R.id.map_Fragment)!!
         val markLocationFAB: FloatingActionButton = findViewById(R.id.markLocationFAB)
@@ -231,6 +233,7 @@ class GuessPlaceActivity : AppCompatActivity(), OnStreetViewPanoramaReadyCallbac
         return LatLng(latitude,longitude)
     }
 
+    //Checks if the streetview panorama exists for the given coordinates
     private fun checkStreetViewAvailability(coordinates: LatLng) {
         val apiKey = com.example.geoguesser.BuildConfig.MAPS_API_KEY
         val streetViewApiUrl =
@@ -291,10 +294,8 @@ class GuessPlaceActivity : AppCompatActivity(), OnStreetViewPanoramaReadyCallbac
 
         //If it's the last round, display New Game and Main Menu Buttons. Reset scoreboard values
         } else {
-
-            //TODO: display scoreboard name submission for ROOM
+            //Displays dialog box to allow users to input their name and record their score
             showNameInputDialog(totalScore)
-
 
             //Next round button is invisible because this is the last round
             binding.btnNewRound.visibility = View.GONE
@@ -363,7 +364,6 @@ class GuessPlaceActivity : AppCompatActivity(), OnStreetViewPanoramaReadyCallbac
         totalScore = 0
         currentRound = 1
 
-
         val coordinates = generateRandomLocation()   // Generate new random location
         checkStreetViewAvailability(coordinates)  // Fetch street view for the new location
 
@@ -386,6 +386,7 @@ class GuessPlaceActivity : AppCompatActivity(), OnStreetViewPanoramaReadyCallbac
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(defaultLatLng, defaultZoom))
     }
 
+    //Alert dialog that displays an EditText to enter the user's name
     private fun showNameInputDialog(score: Int) {
         val builder = AlertDialog.Builder(this)
         builder.setTitle("Enter your name")
@@ -406,6 +407,7 @@ class GuessPlaceActivity : AppCompatActivity(), OnStreetViewPanoramaReadyCallbac
         builder.show()
     }
 
+    //Saves the user's name and score to a Room database
     private fun saveScoreToDatabase(playerName: String, score: Int) {
         val scoreEntity = Score(playerName = playerName, score = score)
 

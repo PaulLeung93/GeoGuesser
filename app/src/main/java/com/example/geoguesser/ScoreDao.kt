@@ -11,7 +11,7 @@ interface ScoreDao {
     @Insert
     fun insertScore(score: Score)
 
-    @Query("SELECT * FROM scoreboard")
+    @Query("SELECT * FROM scoreboard ORDER BY score DESC")
     fun getAllScores(): Flow<List<Score>>
 }
 
