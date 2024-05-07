@@ -29,15 +29,23 @@
         android:contentDescription="Display Map"
         android:focusable="true" />
 
+    <!-- Guideline for Splitting Map Fragment and Cardview heights into halves -->
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_top"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.5" />
+
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/map_Fragment"
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
-        android:layout_height="350dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_height="0dp"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0"
-        tools:layout_editor_absoluteX="16dp" />
+        app:layout_constraintBottom_toTopOf="@id/guideline_top"
+        app:layout_constraintHeight_default="percent"
+        app:layout_constraintHeight_percent="0.5" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/markLocationFAB"
@@ -60,9 +68,8 @@
     <androidx.cardview.widget.CardView
         android:id="@+id/scoreboardCardView"
         android:layout_width="match_parent"
-        android:layout_height="410dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/map_Fragment"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@id/guideline_top"
         app:layout_constraintBottom_toBottomOf="parent"
         android:visibility="gone">
 
